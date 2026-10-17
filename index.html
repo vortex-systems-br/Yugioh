@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080910">
+<title>Shadow Realm — Universo demonstrativo</title>
+<style>
+:root{
+  color-scheme:dark;--bg:#080910;--panel:#121522;--text:#f2f4ff;
+  --muted:#b1b7cc;--blue:#397bff;--violet:#8c48ff;--gold:#d6b36a;
+  --line:#30364a;--danger:#ff8c99;--radius:18px
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:16px/1.55 system-ui,sans-serif;
+  background-image:radial-gradient(ellipse at 80% 0%,#23133d 0,transparent 45%)
+}
+button,input,select{font:inherit}
+button,input,select{
+  border:1px solid var(--line);border-radius:10px;
+  background:#171c2b;color:var(--text);padding:10px 13px
+}
+button{cursor:pointer;transition:background .18s,transform .18s}
+button:hover:not(:disabled){background:#28314a}
+button:active:not(:disabled){transform:translateY(1px)}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+a{color:var(--gold)}
+header{
+  border-bottom:1px solid var(--line);padding:18px max(20px,calc((100vw - 1200px)/2));
+  background:#080910ee
+}
+.brand{font-family:Georgia,serif;letter-spacing:.2em;color:var(--gold)}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+nav button[aria-current=page]{border-color:var(--gold);color:var(--gold)}
+main{max-width:1200px;margin:auto;padding:28px 20px 80px}
+h1,h2,h3{font-family:Georgia,serif;line-height:1.15}
+h1{font-size:clamp(2.7rem,8vw,5.5rem);margin:20px 0}
+h2{font-size:2rem}
+small,.muted{color:var(--muted)}
+.panel{
+  background:linear-gradient(135deg,#151927,#0c101b);
+  border:1px solid var(--line);border-radius:var(--radius);padding:22px
+}
+.stack{display:grid;gap:18px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.primary{background:#254fb0;border-color:var(--blue)}
+.gold{border-color:var(--gold);color:var(--gold)}
+.danger{color:var(--danger)}
+.hero{min-height:440px;display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:30px}
+.portal{
+  width:min(100%,320px);aspect-ratio:1;border-radius:50%;margin:auto;
+  border:1px solid var(--gold);box-shadow:0 0 70px #8c48ff33,inset 0 0 60px #397bff22;
+  position:relative;display:grid;place-items:center;animation:breathe 6s ease-in-out infinite
+}
+.portal:before,.portal:after{
+  content:"";position:absolute;inset:20px;border-radius:50%;
+  border:1px dashed #8c48ff99;transform:rotate(25deg)
+}
+.portal:after{inset:45px;border-color:#d6b36a66}
+.sigil{font:100px Georgia,serif;color:var(--gold);text-shadow:0 0 30px #d6b36a66}
+@keyframes breathe{50%{transform:scale(1.025);box-shadow:0 0 90px #8c48ff44}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+.list{display:grid;gap:12px}
+.list .card{min-height:0}
+.list .art{height:100px}
+.card{
+  --accent:#777f97;position:relative;min-width:0;overflow:hidden;
+  border:1px solid var(--accent);border-radius:14px;padding:14px;
+  background:linear-gradient(140deg,#20263b,#10121d);transition:transform .2s,box-shadow .2s;
+  transform-style:preserve-3d
+}
+.card[data-rare=Rare]{--accent:#397bff}
+.card[data-rare="Super Rare"]{--accent:#8c48ff}
+.card[data-rare="Ultra Rare"]{--accent:#d6b36a}
+.card[data-rare="Secret Rare"]{--accent:#cbdfff}
+.card:hover{box-shadow:0 10px 28px #0008}
+.art{
+  height:160px;display:grid;place-items:center;border-radius:9px;overflow:hidden;
+  background:radial-gradient(circle,#8c48ff24,transparent 70%),#0a0c15;
+  border:1px solid #ffffff12;margin:10px 0;position:relative
+}
+.art:before{
+  content:"";width:85px;height:85px;border:2px solid var(--accent);
+  transform:rotate(45deg);box-shadow:0 0 24px color-mix(in srgb,var(--accent),transparent 65%)
+}
+.art:after{content:attr(data-mark);position:absolute;font:54px Georgia,serif;color:var(--accent)}
+.card h3{margin:3px 0;font-size:1.15rem}
+.card .row{gap:6px}
+.card button{font-size:.85rem;padding:7px 9px}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap}
+.toolbar label{display:grid;gap:5px;font-size:.85rem}
+.board{display:grid;gap:20px}
+.zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.zone{
+  min-height:130px;border:1px dashed #4a5269;border-radius:12px;padding:10px;
+  display:flex;flex-direction:column;gap:8px;background:#080b13
+}
+.zone.target{border-color:var(--danger)}
+.zone strong{font-size:.9rem}
+.hand{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.hand .art{height:90px}
+.log{max-height:190px;overflow:auto;font-size:.9rem;padding-left:24px}
+.notice{border-left:3px solid var(--gold);padding:12px 16px;background:#d6b36a0a}
+#status{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:5;
+  max-width:calc(100vw - 32px);background:#252d42;padding:12px 18px;border-radius:12px;
+  box-shadow:0 5px 25px #0008}
+#status:empty{display:none}
+dialog{
+  width:min(560px,calc(100% - 32px));max-height:90dvh;overflow:auto;
+  border:1px solid var(--gold);border-radius:18px;background:#111624;color:var(--text);
+  padding:24px
+}
+dialog::backdrop{background:#000b}
+footer{padding:20px;color:var(--muted);text-align:center;font-size:.85rem}
+[hidden]{display:none!important}
+@media(max-width:700px){
+  .hero{grid-template-columns:1fr;min-height:0}
+  .portal{width:200px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .card{padding:10px}.art{height:120px}.card h3{font-size:1rem}
+  main{padding:20px 12px 90px}
+  .panel{padding:15px}.zone{padding:8px;min-height:145px}
+  .zones{gap:6px}.zone button{padding:7px;font-size:.8rem}
+  .hand{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation:none!important;transition:none!important}
+}
+body.reduce *,body.reduce *:before,body.reduce *:after{
+  animation:none!important;transition:none!important
+}
+</style>
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px"
+ onfocus="this.style.left='12px'" onblur="this.style.left='-9999px'">Pular para o conteúdo</a>
+<header>
+  <div class="brand">SHADOW REALM</div>
+  <small>Universo original · demonstração local · sem afiliação oficial</small>
+  <nav aria-label="Navegação principal"></nav>
+</header>
+<main id="main" tabindex="-1"></main>
+<footer>Cartas, símbolos e áudio originais. Regras demonstrativas, não oficiais.</footer>
+<div id="status" role="status" aria-live="polite"></div>
+<dialog id="modal" aria-label="Detalhes da carta"></dialog>
+<script>
+"use strict";
+
+// DADOS ORIGINAIS — sem informações ou ativos de cartas oficiais.
+const CARDS = [
+ {id:"sentinela",name:"Sentinela do Limiar",atk:4,def:5,level:3,attribute:"Sombra",rarity:"Common",mark:"I"},
+ {id:"oraculo",name:"Oráculo de Vidro",atk:3,def:6,level:3,attribute:"Luz",rarity:"Rare",mark:"II"},
+ {id:"lobo",name:"Lobo das Runas",atk:5,def:3,level:4,attribute:"Sombra",rarity:"Rare",mark:"III"},
+ {id:"guardiao",name:"Guardião de Ônix",atk:4,def:7,level:4,attribute:"Terra",rarity:"Super Rare",mark:"IV"},
+ {id:"draco",name:"Draco Crepuscular",atk:7,def:2,level:5,attribute:"Fogo",rarity:"Ultra Rare",mark:"V"},
+ {id:"arconte",name:"Arconte Dimensional",atk:6,def:4,level:5,attribute:"Luz",rarity:"Secret Rare",mark:"VI"}
+];
+const cardById = id => CARDS.find(c=>c.id===id);
+const starter = () => CARDS.flatMap(c=>[c.id,c.id]);
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const UID = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const defaultSave = () => ({
+ version:1,decks:[{id:"starter",name:"Deck do Limiar",main:starter(),extra:[],side:[]}],
+ active:"starter",favorites:[],xp:0,claimed:false,history:[],
+ settings:{music:false,sfx:false,musicVolume:.15,sfxVolume:.2,reduce:false}
+});
+function validDeck(d){
+ return d && typeof d.id==="string" && typeof d.name==="string" &&
+ d.name.length<=60 && ["main","extra","side"].every(k=>
+ Array.isArray(d[k]) && d[k].length<=100 && d[k].every(id=>!!cardById(id)));
+}
+function validSave(x){
+ return x && x.version===1 && Array.isArray(x.decks) &&
+ x.decks.length>0 && x.decks.every(validDeck) &&
+ typeof x.active==="string" && Array.isArray(x.favorites) &&
+ x.favorites.every(id=>!!cardById(id)) &&
+ Number.isInteger(x.xp) && x.xp>=0 && typeof x.claimed==="boolean" &&
+ Array.isArray(x.history) && x.history.every(h=>
+ h && typeof h.win==="boolean" && typeof h.date==="string") &&
+ x.settings && ["music","sfx","reduce"].every(k=>typeof x.settings[k]==="boolean") &&
+ ["musicVolume","sfxVolume"].every(k=>Number.isFinite(x.settings[k]) &&
+ x.settings[k]>=0 && x.settings[k]<=1);
+}
+let save=defaultSave(),storageOK=true;
+try{
+ const raw=localStorage.getItem("shadow-realm-v1");
+ if(raw){const data=JSON.parse(raw);if(!validSave(data))throw Error("Dados inválidos");save=data;}
+}catch(e){storageOK=false;}
+function persist(){
+ try{localStorage.setItem("shadow-realm-v1",JSON.stringify(save));storageOK=true;return true;}
+ catch(e){storageOK=false;notify("Não foi possível salvar. Os dados permanecem apenas nesta sessão.");return false;}
+}
+let toastTimer;
+function notify(text){
+ $("#status").textContent=text;clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>$("#status").textContent="",5500);
+}
+let page="inicio",filters={q:"",attribute:"",rarity:"",level:"",favorite:false,sort:"name",list:false};
+let game=null,selected=null,recorded=false;
+function deck(){return save.decks.find(d=>d.id===save.active)||save.decks[0];}
+function deckErrors(d){
+ const errors=[];
+ if(d.main.length!==12)errors.push("O Main Deck deve conter exatamente 12 cartas.");
+ if(d.extra.length||d.side.length)errors.push("Extra e Side não são suportados neste formato.");
+ if(CARDS.some(c=>d.main.filter(id=>id===c.id).length>3))errors.push("Máximo de 3 cópias por carta.");
+ return errors;
+}
+
+// MOTOR PURO: toda mudança da partida passa por uma ação validada.
+// Formato: 20 PV, 3 zonas, mão inicial 3, uma invocação por turno.
+// Defesa não entra no combate deste subconjunto.
+const Engine = {
+ create(ids){
+  return {
+   players:[0,1].map(()=>({life:20,deck:[...ids],hand:[],field:[null,null,null],grave:[]})),
+   turn:0,round:1,phase:"main",summoned:false,winner:null,
+   events:["Duelo iniciado. Jogador começa; ataques bloqueados no primeiro turno."]
+  };
+ },
+ draw(s,p){
+  const x=s.players[p];
+  if(!x.deck.length){s.winner=1-p;s.events.push("Derrota por falta de cartas para comprar.");return;}
+  x.hand.push(x.deck.shift());s.events.push((p?"Oponente":"Jogador")+" comprou uma carta.");
+ },
+ start(ids){
+  const s=this.create(ids);
+  for(let n=0;n<3;n++)for(let p=0;p<2;p++)this.draw(s,p);
+  this.draw(s,0);return s;
+ },
+ apply(state,action){
+  const s=structuredClone(state),p=action.player,x=s.players[p];
+  const reject=message=>({ok:false,message,state});
+  if(!x || s.winner!==null)return reject("A partida não está em andamento.");
+  if(p!==s.turn)return reject("Não é seu turno.");
+  if(action.type==="summon"){
+   if(s.phase!=="main"||s.summoned)return reject("Invocação não permitida nesta fase ou turno.");
+   if(!Number.isInteger(action.index)||action.index<0||action.index>=x.hand.length)
+    return reject("Carta inválida.");
+   const slot=x.field.indexOf(null);
+   if(slot<0)return reject("Todas as zonas estão ocupadas.");
+   const id=x.hand.splice(action.index,1)[0];
+   x.field[slot]={id,attacked:false};s.summoned=true;
+   s.events.push((p?"Oponente":"Jogador")+" invocou "+cardById(id).name+".");
+  }else if(action.type==="battle"){
+   if(s.phase!=="main")return reject("A fase de batalha já foi iniciada.");
+   s.phase="battle";s.events.push("Fase de batalha.");
+  }else if(action.type==="attack"){
+   if(s.phase!=="battle"||s.round===1)return reject("Ataque não permitido.");
+   if(!Number.isInteger(action.slot)||action.slot<0||action.slot>=3)
+    return reject("Zona de ataque inválida.");
+   const a=x.field[action.slot],enemy=s.players[1-p];
+   if(!a||a.attacked)return reject("Atacante indisponível.");
+   const attack=cardById(a.id).atk;
+   if(action.target===null){
+    if(enemy.field.some(Boolean))return reject("Ataque direto bloqueado por monstros.");
+    enemy.life=Math.max(0,enemy.life-attack);
+    s.events.push("Ataque direto: "+attack+" de dano.");
+   }else{
+    if(!Number.isInteger(action.target)||action.target<0||action.target>=3)
+     return reject("Alvo inválido.");
+    const b=enemy.field[action.target];
+    if(!b)return reject("Não há monstro nessa zona.");
+    const delta=attack-cardById(b.id).atk;
+    if(delta>=0){enemy.grave.push(b.id);enemy.field[action.target]=null;}
+    if(delta<=0){x.grave.push(a.id);x.field[action.slot]=null;}
+    if(delta>0)enemy.life=Math.max(0,enemy.life-delta);
+    if(delta<0)x.life=Math.max(0,x.life+delta);
+    s.events.push(cardById(a.id).name+" enfrentou "+cardById(b.id).name+
+     ". Diferença de ataque: "+Math.abs(delta)+".");
+   }
+   if(x.field[action.slot])x.field[action.slot].attacked=true;
+   if(enemy.life===0)s.winner=p;
+   else if(x.life===0)s.winner=1-p;
+  }else if(action.type==="end"){
+   s.turn=1-p;s.round++;s.phase="main";s.summoned=false;
+   s.players[s.turn].field.forEach(m=>{if(m)m.attacked=false;});
+   s.events.push("Turno "+s.round+": "+(s.turn?"oponente":"jogador")+".");
+   this.draw(s,s.turn);
+  }else if(action.type==="surrender"){
+   s.winner=1-p;s.events.push("Rendição.");
+  }else return reject("Ação desconhecida.");
+  if(s.winner!==null)s.events.push(s.winner===0?"Vitória do jogador.":"Vitória do oponente.");
+  return {ok:true,state:s};
+ }
+};
+
+// Oponente determinístico: só usa ações aceitas pelo mesmo motor.
+function opponent(state){
+ let s=state;
+ const act=a=>{
+  const r=Engine.apply(s,{...a,player:1});
+  if(r.ok)s=r.state;
+  return r.ok;
+ };
+ if(s.turn!==1||s.winner!==null)return s;
+ const hand=s.players[1].hand;
+ if(hand.length && s.players[1].field.includes(null)){
+  let best=0;
+  hand.forEach((id,i)=>{if(cardById(id).atk>cardById(hand[best]).atk)best=i;});
+  act({type:"summon",index:best});
+ }
+ act({type:"battle"});
+ for(let slot=0;slot<3 && s.winner===null;slot++){
+  const a=s.players[1].field[slot];if(!a)continue;
+  const targets=s.players[0].field.map((m,i)=>m?{i,atk:cardById(m.id).atk}:null).filter(Boolean);
+  targets.sort((a,b)=>a.atk-b.atk||a.i-b.i);
+  if(!targets.length)act({type:"attack",slot,target:null});
+  else if(cardById(a.id).atk>=targets[0].atk)act({type:"attack",slot,target:targets[0].i});
+ }
+ if(s.winner===null)act({type:"end"});
+ return s;
+}
+
+// ÁUDIO ORIGINAL SINTETIZADO — inicializado apenas por interação.
+let audio=null,musicNodes=[];
+function ensureAudio(){
+ if(!audio){
+  const C=window.AudioContext||window.webkitAudioContext;
+  if(!C){notify("Web Audio indisponível neste navegador.");return false;}
+  audio=new C();
+ }
+ audio.resume().catch(()=>{});return true;
+}
+function music(){
+ musicNodes.forEach(n=>{n.osc.stop();n.osc.disconnect();n.gain.disconnect();});
+ musicNodes=[];
+ if(!save.settings.music||!ensureAudio())return;
+ [110,164.81,220].forEach(freq=>{
+  const osc=audio.createOscillator(),gain=audio.createGain();
+  osc.type="sine";osc.frequency.value=freq;
+  gain.gain.value=save.settings.musicVolume*.035;
+  osc.connect(gain);gain.connect(audio.destination);osc.start();
+  musicNodes.push({osc,gain});
+ });
+}
+function sound(kind){
+ if(!save.settings.sfx||!ensureAudio())return;
+ const osc=audio.createOscillator(),gain=audio.createGain(),t=audio.currentTime;
+ osc.frequency.setValueAtTime(kind==="attack"?130:kind==="win"?660:330,t);
+ osc.frequency.exponentialRampToValueAtTime(kind==="attack"?50:440,t+.15);
+ gain.gain.setValueAtTime(save.settings.sfxVolume*.12,t);
+ gain.gain.exponentialRampToValueAtTime(.001,t+.22);
+ osc.connect(gain);gain.connect(audio.destination);osc.start();osc.stop(t+.23);
+ osc.onended=()=>{osc.disconnect();gain.disconnect();};
+}
+
+function cardHTML(c,mode,index){
+ const favorite=save.favorites.includes(c.id);
+ const qty=deck().main.filter(id=>id===c.id).length;
+ return `<article class="card" data-rare="${c.rarity}">
+ <small>${c.rarity} · ${c.attribute}</small><h3>${c.name}</h3>
+ <div class="art" data-mark="${c.mark}" role="img" aria-label="Símbolo abstrato original de ${c.name}"></div>
+ <div class="row between"><span>ATK ${c.atk} / DEF ${c.def}</span><small>Nível ${c.level}</small></div>
+ <div class="row" style="margin-top:12px">
+ <button data-action="inspect" data-id="${c.id}" aria-label="Inspecionar ${c.name}">Inspecionar</button>
+ ${mode==="hand"?`<button data-action="summon" data-index="${index}"
+ ${game.turn!==0||game.phase!=="main"||game.summoned||game.winner!==null?"disabled":""}>Invocar</button>`:
+ `<button data-action="favorite" data-id="${c.id}" aria-pressed="${favorite}"
+ aria-label="${favorite?"Remover dos":"Adicionar aos"} favoritos">${favorite?"Favorito":"Favoritar"}</button>
+ <button data-action="add" data-id="${c.id}" ${qty>=3?"disabled":""}>+ Deck (${qty})</button>`}
+ </div></article>`;
+}
+function render(){
+ document.body.classList.toggle("reduce",save.settings.reduce);
+ const items=[["inicio","Início"],["biblioteca","Biblioteca"],["deck","Deck Builder"],
+ ["arena","Arena"],["mundo","Mundo e missões"],["perfil","Perfil"],["config","Configurações"]];
+ $("nav").innerHTML=items.map(([id,name])=>`<button data-page="${id}"
+ ${page===id?'aria-current="page"':""}>${name}</button>`).join("");
+ const main=$("#main");
+ if(page==="inicio"){
+ main.innerHTML=`<section class="hero"><div><small class="brand">ATRAVESSE O LIMIAR</small>
+ <h1>O silêncio<br>antes do duelo.</h1>
+ <p class="muted">Um universo original de runas, guardiões e confrontos. Construa seu deck e conquiste a primeira arena.</p>
+ <div class="row"><button class="primary" data-page="arena">Entrar no duelo</button>
+ <button class="gold" data-page="biblioteca">Explorar cartas</button></div></div>
+ <div class="portal" aria-hidden="true"><span class="sigil">◇</span></div></section>
+ <div class="notice">Formato demonstrativo: 12 cartas, 20 pontos de vida e combate por ataque.
+ Não reproduz o conjunto de regras oficial de Yu-Gi-Oh!.</div>`;
+ }else if(page==="biblioteca"){
+ main.innerHTML=`<h2>Biblioteca do Limiar</h2>
+ <p class="muted">Seis cartas originais. Todas são monstros demonstrativos sem efeitos especiais.</p>
+ <div class="toolbar panel">
+ <label>Buscar nome<input id="search" type="search" value="${esc(filters.q)}"></label>
+ <label>Atributo<select id="attribute">${options(["","Sombra","Luz","Terra","Fogo"],filters.attribute)}</select></label>
+ <label>Raridade<select id="rarity">${options(["",...new Set(CARDS.map(c=>c.rarity))],filters.rarity)}</select></label>
+ <label>Nível<select id="level">${options(["","3","4","5"],filters.level)}</select></label>
+ <label>Ordenar<select id="sort">${[["name","Nome"],["atk","Ataque"],["def","Defesa"],["level","Nível"]]
+ .map(([v,t])=>`<option value="${v}" ${filters.sort===v?"selected":""}>${t}</option>`).join("")}</select></label>
+ <label><span>Favoritos</span><input id="onlyFavorites" type="checkbox" ${filters.favorite?"checked":""}></label>
+ <button data-action="view">${filters.list?"Usar grade":"Usar lista"}</button></div>
+ <p id="count" class="muted"></p><div id="cards"></div>`;
+ renderCards();
+ }else if(page==="deck"){
+ const d=deck(),errors=deckErrors(d);
+ main.innerHTML=`<h2>Deck Builder</h2><div class="stack">
+ <section class="panel"><div class="row">
+ <label>Deck <select id="activeDeck">${save.decks.map(x=>`<option value="${esc(x.id)}"
+ ${d.id===x.id?"selected":""}>${esc(x.name)}</option>`).join("")}</select></label>
+ <button data-action="newDeck">Criar</button><button data-action="duplicate">Duplicar</button>
+ <button data-action="deleteDeck" class="danger">Excluir</button></div>
+ <div class="row" style="margin-top:14px">
+ <label>Nome <input id="deckName" maxlength="60" value="${esc(d.name)}"></label>
+ <button data-action="rename">Salvar nome</button>
+ <button data-action="export">Exportar JSON</button>
+ <label>Importar JSON <input id="import" type="file" accept=".json,application/json"></label>
+ </div></section>
+ <section class="panel"><h3>Main Deck · ${d.main.length}/12</h3>
+ ${CARDS.map(c=>{
+ const n=d.main.filter(id=>id===c.id).length;
+ return `<div class="row between" style="padding:10px 0;border-bottom:1px solid var(--line)">
+ <span>${c.name} <small>× ${n}</small></span><div class="row">
+ <button data-action="remove" data-id="${c.id}" ${!n?"disabled":""} aria-label="Remover ${c.name}">−</button>
+ <button data-action="add" data-id="${c.id}" ${n>=3?"disabled":""} aria-label="Adicionar ${c.name}">+</button>
+ </div></div>`;
+ }).join("")}<p class="${errors.length?"danger":"muted"}">${errors.length?errors.join(" "):"Deck válido para o formato demonstrativo."}</p>
+ <small>Extra Deck: 0 · Side Deck: 0. Não utilizados neste formato.
+ Alterações são salvas automaticamente quando o armazenamento está disponível.</small></section></div>`;
+ }else if(page==="arena")renderArena();
+ else if(page==="mundo"){
+ const win=save.history.some(h=>h.win);
+ main.innerHTML=`<h2>Territórios do Limiar</h2><div class="grid">
+ ${[
+ ["Templo das Sombras","Aprenda a invocar seus guardiões.",true],
+ ["Biblioteca Proibida","Inspecione os seis registros do universo.",true],
+ ["Arena dos Dragões","Conclua sua primeira vitória.",true],
+ ["Ruínas Dimensionais","Desbloqueadas ao reivindicar a recompensa da missão.",save.claimed]
+ ].map(([n,t,open])=>`<article class="panel"><h3>${n}</h3><p>${t}</p>
+ <button data-page="${n==="Biblioteca Proibida"?"biblioteca":"arena"}" ${!open?"disabled":""}>
+ ${open?"Explorar desafio":"Área bloqueada"}</button></article>`).join("")}</div>
+ <section class="panel" style="margin-top:20px"><h3>Missão: Primeira luz</h3>
+ <p>Vença um duelo. Recompensa: 100 XP e acesso às Ruínas Dimensionais.</p>
+ <button data-action="claim" ${!win||save.claimed?"disabled":""}>
+ ${save.claimed?"Recompensa recebida":win?"Reivindicar recompensa":"Vitória necessária"}</button>
+ <p class="muted">Guia local — Neris: “Invoque na fase principal, entre em batalha e escolha um atacante.
+ Ataques diretos exigem um campo adversário vazio.”</p></section>`;
+ }else if(page==="perfil"){
+ main.innerHTML=`<h2>Registro do viajante</h2><section class="panel">
+ <p>Nível ${1+Math.floor(save.xp/100)} · ${save.xp} XP</p>
+ <p>${save.history.filter(h=>h.win).length} vitórias · ${save.history.filter(h=>!h.win).length} derrotas</p>
+ <p>Conquista: ${save.claimed?"Primeira luz desbloqueada":"Primeira luz ainda bloqueada"}</p>
+ <h3>Histórico</h3><ul>${save.history.slice().reverse().map(h=>
+ `<li>${esc(new Date(h.date).toLocaleString("pt-BR"))} — ${h.win?"Vitória":"Derrota"}</li>`).join("")||"<li>Nenhuma partida concluída.</li>"}</ul>
+ <small>Perfil local, sem autenticação ou validação competitiva.</small></section>`;
+ }else if(page==="config"){
+ main.innerHTML=`<h2>Configurações</h2><section class="panel stack">
+ <label><input data-setting="music" type="checkbox" ${save.settings.music?"checked":""}> Ambiente musical sintetizado</label>
+ <label>Volume de música <input data-setting="musicVolume" type="range" min="0" max="1" step=".01" value="${save.settings.musicVolume}"></label>
+ <label><input data-setting="sfx" type="checkbox" ${save.settings.sfx?"checked":""}> Efeitos sonoros</label>
+ <label>Volume de efeitos <input data-setting="sfxVolume" type="range" min="0" max="1" step=".01" value="${save.settings.sfxVolume}"></label>
+ <label><input data-setting="reduce" type="checkbox" ${save.settings.reduce?"checked":""}> Reduzir movimento adicionalmente</label>
+ <p class="muted">A preferência de movimento do sistema também é respeitada. Áudio inicia somente após interação.</p>
+ <p>Armazenamento: ${storageOK?"disponível nesta sessão":"indisponível ou dados anteriores inválidos"}.</p>
+ </section>`;
+ }
+}
+function options(values,current){
+ return values.map(v=>`<option value="${v}" ${v===current?"selected":""}>${v||"Todos"}</option>`).join("");
+}
+function renderCards(){
+ const q=filters.q.toLocaleLowerCase("pt-BR").trim();
+ const list=CARDS.filter(c=>c.name.toLocaleLowerCase("pt-BR").includes(q) &&
+ (!filters.attribute||c.attribute===filters.attribute) &&
+ (!filters.rarity||c.rarity===filters.rarity) &&
+ (!filters.level||c.level===Number(filters.level)) &&
+ (!filters.favorite||save.favorites.includes(c.id)));
+ list.sort((a,b)=>filters.sort==="name"?a.name.localeCompare(b.name,"pt-BR"):
+ b[filters.sort]-a[filters.sort]||a.name.localeCompare(b.name,"pt-BR"));
+ $("#count").textContent=list.length+" cartas encontradas";
+ $("#cards").className=filters.list?"list":"grid";
+ $("#cards").innerHTML=list.length?list.map(c=>cardHTML(c,"library")).join(""):
+ '<p class="notice">Nenhuma carta corresponde aos filtros.</p>';
+}
+function renderArena(){
+ if(!game){
+ $("#main").innerHTML=`<h2>Arena dos Dragões</h2><section class="panel">
+ <p>Deck ativo: ${esc(deck().name)}. O oponente usa a mesma composição e ordem determinística.</p>
+ <p>20 PV · 3 zonas · uma invocação por turno · sem defesa, tributos, efeitos ou correntes.
+ Ataques indisponíveis no primeiro turno. Empates destroem ambos os monstros.</p>
+ <button class="primary" data-action="start">Iniciar duelo</button>
+ <p class="muted">A partida fica apenas em memória. Decks, preferências e resultados concluídos são persistidos.</p></section>`;return;
+ }
+ const ended=game.winner!==null;
+ const zones=p=>game.players[p].field.map((m,i)=>
+ `<div class="zone ${p===1&&selected!==null?"target":""}">
+ ${m?`<strong>${cardById(m.id).name}</strong><small>ATK ${cardById(m.id).atk}</small>
+ <button data-action="inspect" data-id="${m.id}">Inspecionar</button>`:"<small>Zona vazia</small>"}
+ ${p===0&&m?`<button data-action="selectAttacker" data-slot="${i}"
+ ${ended||game.phase!=="battle"||game.round===1||game.turn!==0||m.attacked?"disabled":""}>
+ ${selected===i?"Selecionado":"Atacar"}</button>`:""}
+ ${p===1&&m&&selected!==null?`<button data-action="target" data-slot="${i}">Escolher alvo</button>`:""}
+ </div>`).join("");
+ $("#main").innerHTML=`<h2>Arena dos Dragões</h2>
+ <div class="row between"><p>Turno ${game.round} · ${game.phase==="main"?"Principal":"Batalha"}</p>
+ <strong>${ended?(game.winner===0?"Vitória":"Derrota"):"Seu turno"}</strong></div>
+ <div class="board">
+ <section class="panel"><div class="row between"><h3>Oponente · ${game.players[1].life} PV</h3>
+ <small>Deck ${game.players[1].deck.length} · Cemitério ${game.players[1].grave.length} · Mão ${game.players[1].hand.length}</small></div>
+ <div class="zones">${zones(1)}</div>
+ ${selected!==null&&!game.players[1].field.some(Boolean)?'<button data-action="direct" style="margin-top:12px">Ataque direto</button>':""}
+ </section>
+ <section class="panel"><div class="row between"><h3>Você · ${game.players[0].life} PV</h3>
+ <small>Deck ${game.players[0].deck.length} · Cemitério ${game.players[0].grave.length}</small></div>
+ <div class="zones">${zones(0)}</div></section>
+ <div class="row"><button data-action="battle" ${ended||game.phase!=="main"?"disabled":""}>Fase de batalha</button>
+ <button data-action="end" ${ended?"disabled":""}>Encerrar turno</button>
+ <button data-action="surrender" class="danger" ${ended?"disabled":""}>Render-se</button>
+ <button data-action="restart">Reiniciar</button></div>
+ <section><h3>Sua mão</h3><div class="hand">${game.players[0].hand.map((id,i)=>cardHTML(cardById(id),"hand",i)).join("")||"<p>Mão vazia.</p>"}</div></section>
+ <details class="panel" open><summary>Histórico de eventos</summary>
+ <ol class="log">${game.events.map(e=>`<li>${esc(e)}</li>`).join("")}</ol></details></div>`;
+ const log=$(".log");if(log)log.scrollTop=log.scrollHeight;
+}
+function recordResult(){
+ if(game.winner===null||recorded)return;
+ recorded=true;
+ save.history.push({date:new Date().toISOString(),win:game.winner===0});
+ persist();sound(game.winner===0?"win":"attack");
+ notify(game.winner===0?"Vitória registrada. Visite Mundo e missões para reivindicar a recompensa.":"Derrota registrada.");
+}
+function play(action){
+ const r=Engine.apply(game,{...action,player:0});
+ if(!r.ok){notify(r.message);return;}
+ game=r.state;selected=null;sound(action.type==="attack"?"attack":"select");
+ if(game.turn===1&&game.winner===null)game=opponent(game);
+ recordResult();render();
+}
+function startGame(){
+ const errors=deckErrors(deck());if(errors.length){notify(errors.join(" "));return;}
+ game=Engine.start(deck().main);recorded=false;selected=null;render();sound("select");
+}
+function inspect(id){
+ const c=cardById(id);if(!c)return;
+ const modal=$("#modal");
+ modal.innerHTML=`<h2>${c.name}</h2><div class="card" data-rare="${c.rarity}">
+ <div class="art" data-mark="${c.mark}" role="img" aria-label="Símbolo de ${c.name}"></div>
+ <p>${c.rarity} · ${c.attribute} · Nível ${c.level}</p>
+ <p>ATK ${c.atk} · DEF ${c.def}</p>
+ <p>Monstro original demonstrativo, sem efeito. DEF é metadado e não participa do formato atual.</p></div>
+ <p><button data-action="close">Fechar</button></p>`;
+ modal.showModal();sound("select");
+}
+document.addEventListener("click",event=>{
+ const el=event.target.closest("button");if(!el||el.disabled)return;
+ if(el.dataset.page){
+ page=el.dataset.page;selected=null;render();$("#main").focus();return;
+ }
+ const action=el.dataset.action,id=el.dataset.id;
+ if(action==="inspect")return inspect(id);
+ if(action==="close")return $("#modal").close();
+ if(action==="favorite"){
+ save.favorites=save.favorites.includes(id)?save.favorites.filter(x=>x!==id):[...save.favorites,id];
+ persist();if(page==="biblioteca")renderCards();return;
+ }
+ if(action==="view"){filters.list=!filters.list;render();return;}
+ if(action==="add"){
+ if(deck().main.filter(x=>x===id).length>=3)return;
+ deck().main.push(id);persist();page==="biblioteca"?renderCards():render();return;
+ }
+ if(action==="remove"){
+ const i=deck().main.indexOf(id);if(i>=0)deck().main.splice(i,1);persist();render();return;
+ }
+ if(action==="newDeck"){
+ const d={id:UID(),name:"Novo deck",main:[],extra:[],side:[]};
+ save.decks.push(d);save.active=d.id;persist();render();return;
+ }
+ if(action==="duplicate"){
+ const d=structuredClone(deck());d.id=UID();d.name=(d.name+" — cópia").slice(0,60);
+ save.decks.push(d);save.active=d.id;persist();render();return;
+ }
+ if(action==="deleteDeck"){
+ if(save.decks.length===1){notify("Mantenha pelo menos um deck.");return;}
+ if(!confirm("Excluir este deck definitivamente?"))return;
+ save.decks=save.decks.filter(d=>d.id!==deck().id);save.active=save.decks[0].id;
+ persist();render();return;
+ }
+ if(action==="rename"){
+ const name=$("#deckName").value.trim();
+ if(!name){notify("Informe um nome.");return;}
+ deck().name=name.slice(0,60);persist();render();return;
+ }
+ if(action==="export"){
+ const blob=new Blob([JSON.stringify({version:1,deck:deck()},null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="shadow-realm-deck.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return;
+ }
+ if(action==="start")return startGame();
+ if(action==="restart"){
+ if(game.winner===null&&!confirm("Abandonar a partida atual sem registrar resultado?"))return;
+ return startGame();
+ }
+ if(action==="summon")return play({type:"summon",index:Number(el.dataset.index)});
+ if(action==="battle")return play({type:"battle"});
+ if(action==="end")return play({type:"end"});
+ if(action==="surrender"){if(confirm("Confirmar rendição?"))play({type:"surrender"});return;}
+ if(action==="selectAttacker"){selected=Number(el.dataset.slot);renderArena();return;}
+ if(action==="target")return play({type:"attack",slot:selected,target:Number(el.dataset.slot)});
+ if(action==="direct")return play({type:"attack",slot:selected,target:null});
+ if(action==="claim"){
+ if(save.claimed||!save.history.some(h=>h.win)){notify("Requisitos da missão não cumpridos.");return;}
+ save.claimed=true;save.xp+=100;
+ const stored=persist();render();
+ notify(stored?"Recompensa salva: +100 XP. Ruínas desbloqueadas.":"Recompensa aplicada apenas nesta sessão.");return;
+ }
+});
+document.addEventListener("input",event=>{
+ const el=event.target;
+ if(el.id==="search"){filters.q=el.value;renderCards();}
+});
+document.addEventListener("change",async event=>{
+ const el=event.target;
+ if(["attribute","rarity","level","sort"].includes(el.id)){
+ filters[el.id]=el.value;renderCards();return;
+ }
+ if(el.id==="onlyFavorites"){filters.favorite=el.checked;renderCards();return;}
+ if(el.id==="activeDeck"){save.active=el.value;persist();render();return;}
+ if(el.dataset.setting){
+ const key=el.dataset.setting;
+ save.settings[key]=el.type==="checkbox"?el.checked:Number(el.value);
+ persist();document.body.classList.toggle("reduce",save.settings.reduce);
+ if(key==="music"||key==="musicVolume")music();
+ if(key==="sfx"||key==="sfxVolume")sound("select");return;
+ }
+ if(el.id==="import"){
+ const file=el.files[0];if(!file)return;
+ try{
+  if(file.size>100000)throw Error("Arquivo muito grande.");
+  const data=JSON.parse(await file.text());
+  if(data.version!==1||!validDeck(data.deck))throw Error("Estrutura de deck inválida.");
+  const d=structuredClone(data.deck);d.id=UID();
+  save.decks.push(d);save.active=d.id;persist();render();
+  notify("Deck importado. A validade para duelos é verificada separadamente.");
+ }catch(e){notify("Importação recusada: "+e.message);}
+ }
+});
+// Inclinação discreta somente com mouse e movimento permitido.
+document.addEventListener("pointermove",event=>{
+ if(event.pointerType!=="mouse"||save.settings.reduce||
+ matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const c=event.target.closest(".card");if(!c)return;
+ const r=c.getBoundingClientRect();
+ c.style.transform=`perspective(900px) rotateX(${-(event.clientY-r.top-r.height/2)/35}deg)
+ rotateY(${(event.clientX-r.left-r.width/2)/35}deg)`;
+});
+document.addEventListener("pointerout",event=>{
+ const c=event.target.closest(".card");
+ if(c&&!c.contains(event.relatedTarget))c.style.transform="";
+});
+document.addEventListener("pointerdown",()=>{
+ if(save.settings.music&&musicNodes.length===0)music();
+},{once:true});
+render();
+if(!storageOK)notify("Armazenamento indisponível ou dados anteriores inválidos. Uma sessão demonstrativa foi iniciada.");
+</script>
+</body>
+</html>
